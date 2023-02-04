@@ -9,16 +9,29 @@ public class Main {
 
     public static void main(String[] args) {
         int[] data = getInfo();
-
         int[][] lab = new int[data[0]][data[1]];
 
-        int[][] res = waveLogarithm(lab,data[2] - 1,data[3] - 1,data[4] - 1,data[5] - 1);
+        lab[0][2] = -1;
+        lab[1][2] = -1;
+        lab[4][1] = -1;
+        lab[4][2] = -1;
+        lab[4][3] = -1;
+        lab[4][4] = -1;
+        lab[3][8] = -1;
+        lab[3][9] = -1;
+        lab[5][9] = -1;
+        lab[5][10] = -1;
+        lab[6][9] = -1;
+        lab[6][10] = -1;
+
+
+        int[][] res = waveLogarithm(lab, data[2], data[3], data[4], data[5]);
         printTab(res);
     }
 
-    public static int[] getInfo(){
+    public static int[] getInfo() throws MyException {
         int[] info = new int[6];
-        try{
+        try {
             System.out.println("Введите количество строк на карте: ");
             info[0] = sc.nextInt();
             System.out.println("Введите количество столбцов на карте: ");
@@ -31,14 +44,19 @@ public class Main {
             info[4] = sc.nextInt();
             System.out.println("Введите координату У конечной точки: ");
             info[5] = sc.nextInt();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Введите корректные данные!");
+        }
+        for (int j : info) {
+            if (j < 0 || info[2] >= info[0] || info[4] >= info[0] || info[3] >= info[1] || info[5] >= info[1]) {
+                throw new MyException("Введите корректные данные!");
+            }
         }
         return info;
     }
 
-    public static int[][] waveLogarithm(int[][] lab, int x, int y, int fx, int fy){
+    public static int[][] waveLogarithm(int[][] lab, int x, int y, int fx, int fy) {
         int[] start = new int[]{x, y};
         Queue<int[]> queueOfNext = new LinkedList<>();
         queueOfNext.add(start);
@@ -46,34 +64,39 @@ public class Main {
         int[] dotStart = queueOfNext.element();
         lab[dotStart[0]][dotStart[1]] = 1;
 
-        while (lab[fx][fy] == 0) {
+        for (int i = 0; i < lab.length; i++) {
+            for (int j = 0; j < lab[i].length; j++) {
 
-            int[] dot = queueOfNext.element();
+                while (lab[fx][fy] == 0 || lab[i][j] == 0) {
 
-            if ((dot[0] - 1) >= 0 && lab[dot[0] - 1][dot[1]] == 0) {
-                lab[dot[0] - 1][dot[1]] = lab[dot[0]][dot[1]] + 1;
-                int[] arr1 = new int[]{dot[0] - 1, dot[1]};
-                queueOfNext.add(arr1);
+                    int[] dot = queueOfNext.element();
+
+                    if ((dot[0] - 1) >= 0 && lab[dot[0] - 1][dot[1]] == 0) {
+                        lab[dot[0] - 1][dot[1]] = lab[dot[0]][dot[1]] + 1;
+                        int[] arr1 = new int[]{dot[0] - 1, dot[1]};
+                        queueOfNext.add(arr1);
+                    }
+
+                    if ((dot[1] + 1) < lab[0].length && lab[dot[0]][dot[1] + 1] == 0) {
+                        lab[dot[0]][dot[1] + 1] = lab[dot[0]][dot[1]] + 1;
+                        int[] arr2 = new int[]{dot[0], dot[1] + 1};
+                        queueOfNext.add(arr2);
+                    }
+
+                    if ((dot[0] + 1) < lab.length && lab[dot[0] + 1][dot[1]] == 0) {
+                        lab[dot[0] + 1][dot[1]] = lab[dot[0]][dot[1]] + 1;
+                        int[] arr3 = new int[]{dot[0] + 1, dot[1]};
+                        queueOfNext.add(arr3);
+                    }
+
+                    if ((dot[1] - 1) >= 0 && lab[dot[0]][dot[1] - 1] == 0) {
+                        lab[dot[0]][dot[1] - 1] = lab[dot[0]][dot[1]] + 1;
+                        int[] arr4 = new int[]{dot[0], dot[1] - 1};
+                        queueOfNext.add(arr4);
+                    }
+                    queueOfNext.remove();
+                }
             }
-
-            if ((dot[1] + 1) < lab.length && lab[dot[0]][dot[1] + 1] == 0) {
-                lab[dot[0]][dot[1] + 1] = lab[dot[0]][dot[1]] + 1;
-                int[] arr2 = new int[]{dot[0], dot[1] + 1};
-                queueOfNext.add(arr2);
-            }
-
-            if ((dot[0] + 1) < lab.length && lab[dot[0] + 1][dot[1]] == 0) {
-                lab[dot[0] + 1][dot[1]] = lab[dot[0]][dot[1]] + 1;
-                int[] arr3 = new int[]{dot[0] + 1, dot[1]};
-                queueOfNext.add(arr3);
-            }
-
-            if ((dot[1] - 1) >= 0 && lab[dot[0]][dot[1] - 1] == 0) {
-                lab[dot[0]][dot[1] - 1] = lab[dot[0]][dot[1]] + 1;
-                int[] arr5 = new int[]{dot[0], dot[1] - 1};
-                queueOfNext.add(arr5);
-            }
-            queueOfNext.remove();
         }
         return lab;
     }
