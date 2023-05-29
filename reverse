@@ -1,0 +1,35 @@
+// Method for singly linked list
+
+public void reverse(){
+        Node<E> node = head;
+        Node<E> temp = null;
+
+        while (node != null){
+            Node<E> next = node.nextNode;
+            node.nextNode = temp;
+            temp = node;
+            node = next;
+        }
+        head = temp;
+    }
+    
+// Method for doubly linked list 
+
+public void reverse() {
+        Node<E> node = head;
+        while (node != null) {
+            Node<E> next = node.nextNode;
+            Node<E> previous = node.previousNode;
+
+            node.nextNode = previous;
+            node.previousNode = next;
+
+            if (previous == null) {
+                tail = node;
+            }
+            if (next == null) {
+                head = node;
+            }
+            node = next;
+        }
+    }
